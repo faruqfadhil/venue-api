@@ -51,6 +51,7 @@ func (r *repository) Register(ctx context.Context, payload *entity.User) error {
 }
 
 type jwtClaim struct {
+	ID       int    `json:"id"`
 	Email    string `json:"email"`
 	FullName string `json:"full_name"`
 	jwt.RegisteredClaims
@@ -72,6 +73,7 @@ func (r *repository) Login(ctx context.Context, email, password string) (*entity
 	// Generate access token
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claim := &jwtClaim{
+		out.ID,
 		out.Email,
 		out.FullName,
 		jwt.RegisteredClaims{
@@ -88,6 +90,24 @@ func (r *repository) Login(ctx context.Context, email, password string) (*entity
 		Email:       out.Email,
 		FullName:    out.FullName,
 		AccessToken: newTokenString,
+	}, nil
+}
+
+func (r *repository) ValidateToken(ctx context.Context, token string) (*entity.CredentialClaim, error) {
+	claim := &jwtClaim{}
+	jwtToken, err := jwt.ParseWithClaims(token, claim, func(t *jwt.Token) (interface{}, error) {
+		return []byte(tokenSecretKey), nil
+	})
+	if err != nil {
+		return nil, errutil.New(errutil.ErrUnauthorized, fmt.Errorf("[ValidateToken] err: %v", err))
+	}
+	if !jwtToken.Valid {
+		return nil, errutil.New(errutil.ErrUnauthorized, fmt.Errorf("[ValidateToken] err: %v", "invalid token"))
+	}
+	return &entity.CredentialClaim{
+		ID:       claim.ID,
+		Email:    claim.Email,
+		FullName: claim.FullName,
 	}, nil
 }
 

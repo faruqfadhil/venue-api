@@ -14,6 +14,7 @@ type Usecase interface {
 	GetCities(ctx context.Context) ([]*entity.City, error)
 	Register(ctx context.Context, payload *entity.User) error
 	Login(ctx context.Context, email, password string) (*entity.Auth, error)
+	ValidateToken(ctx context.Context, token string) (*entity.CredentialClaim, error)
 }
 
 type usecase struct {
@@ -54,4 +55,8 @@ func (u *usecase) Login(ctx context.Context, email, password string) (*entity.Au
 		return nil, err
 	}
 	return authInfo, nil
+}
+
+func (u *usecase) ValidateToken(ctx context.Context, token string) (*entity.CredentialClaim, error) {
+	return u.repo.ValidateToken(ctx, token)
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/faruqfadhil/venue-api/core/module"
 	"github.com/faruqfadhil/venue-api/handler"
+	"github.com/faruqfadhil/venue-api/pkg/api"
 	venueRepo "github.com/faruqfadhil/venue-api/repository/venue"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -23,6 +24,7 @@ func main() {
 	repo := venueRepo.New(db)
 	usecase := module.New(repo)
 	hdlr := handler.New(usecase)
+	middlewareSvc := api.NewMiddlewareService(usecase)
 	router := gin.Default()
 	v1 := router.Group("/v1")
 	{
@@ -30,6 +32,12 @@ func main() {
 		v1.POST("/register", hdlr.Register)
 		v1.POST("/login", hdlr.Login)
 	}
+	usingAuth := router.Group("/v1")
+	usingAuth.Use(middlewareSvc.AuthenticateRequest())
+	{
+		// usingAuth.GET("/city", hdlr.GetCities)
+	}
+
 	router.Run(fmt.Sprintf(":%s", os.Getenv("GIN_PORT")))
 }
 
