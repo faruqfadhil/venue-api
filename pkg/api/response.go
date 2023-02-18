@@ -39,6 +39,9 @@ func ResponseFailed(c *gin.Context, err error) {
 	if errors.Is(typeErr, errutil.ErrGeneralNotFound) {
 		resp = notFoundErr(err)
 	}
+	if errors.Is(typeErr, errutil.ErrUnauthorized) {
+		resp = unauthorizedErr(err)
+	}
 	c.JSON(resp.Meta.Code, resp)
 }
 
@@ -57,6 +60,16 @@ func notFoundErr(err error) *Response {
 		Meta: &ResponseMeta{
 			Status:  "error",
 			Code:    http.StatusNotFound,
+			Message: err.Error(),
+		},
+	}
+}
+
+func unauthorizedErr(err error) *Response {
+	return &Response{
+		Meta: &ResponseMeta{
+			Status:  "error",
+			Code:    http.StatusUnauthorized,
 			Message: err.Error(),
 		},
 	}

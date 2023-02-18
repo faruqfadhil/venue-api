@@ -10,6 +10,7 @@ var (
 	ErrGeneralNotFound   = errors.New("not found")
 	ErrGeneralDB         = errors.New("DB error")
 	ErrInternal          = errors.New("internal server error")
+	ErrUnauthorized      = errors.New("err unathorized")
 )
 
 type InternalError struct {

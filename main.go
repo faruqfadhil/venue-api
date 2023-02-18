@@ -27,6 +27,8 @@ func main() {
 	v1 := router.Group("/v1")
 	{
 		v1.GET("/city", hdlr.GetCities)
+		v1.POST("/register", hdlr.Register)
+		v1.POST("/login", hdlr.Login)
 	}
 	router.Run(fmt.Sprintf(":%s", os.Getenv("GIN_PORT")))
 }

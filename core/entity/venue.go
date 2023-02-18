@@ -16,8 +16,8 @@ type Venue struct {
 }
 
 type City struct {
-	ID   int
-	Name string
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type VenueDetail struct {
