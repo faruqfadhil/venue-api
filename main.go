@@ -31,11 +31,15 @@ func main() {
 		v1.GET("/city", hdlr.GetCities)
 		v1.POST("/register", hdlr.Register)
 		v1.POST("/login", hdlr.Login)
+		v1.GET("/venue", hdlr.GetVenues)
+		v1.GET("/nearby", hdlr.GetNearby)
+		v1.GET("/venue/:id", hdlr.GetVenueDetail)
+		v1.GET("/venue/package/:id", hdlr.GetPackageDetail)
 	}
 	usingAuth := router.Group("/v1")
 	usingAuth.Use(middlewareSvc.AuthenticateRequest())
 	{
-		// usingAuth.GET("/city", hdlr.GetCities)
+		usingAuth.POST("/venue/package/order", hdlr.CreateOrder)
 	}
 
 	router.Run(fmt.Sprintf(":%s", os.Getenv("GIN_PORT")))
