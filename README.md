@@ -19,3 +19,6 @@ docker-compose up --build
 ```shell
 docker-compose down --remove-orphans --volumes
 ```
+
+# API Contract
+https://dandelion-authority-347.notion.site/API-Contract-2a9ae3587d99414ba42740c813a518e1
