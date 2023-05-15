@@ -9,13 +9,23 @@ import (
 	"github.com/faruqfadhil/venue-api/handler"
 	"github.com/faruqfadhil/venue-api/pkg/api"
 	venueRepo "github.com/faruqfadhil/venue-api/repository/venue"
-	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin" 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func main() {
+	// Config CORS
+	config := cors.DefaultConfig()
+	config.AllowHeaders = []string{"Authorization"}
+	config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+
+	// Create a new CORS middleware instance with default options
+	c := cors.New(config)
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("unable to load env, err: %v", err)
@@ -26,6 +36,9 @@ func main() {
 	hdlr := handler.New(usecase)
 	middlewareSvc := api.NewMiddlewareService(usecase)
 	router := gin.Default()
+	// use CORS
+	router.Use(c)
+
 	v1 := router.Group("/v1")
 	{
 		v1.GET("/city", hdlr.GetCities)
